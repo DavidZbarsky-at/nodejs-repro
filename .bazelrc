@@ -1,0 +1,45 @@
+common --enable_bzlmod
+common --watchfs
+
+# Pin java versions
+common --java_language_version=11
+common --java_runtime_version=remotejdk_11
+common --tool_java_language_version=11
+common --tool_java_runtime_version=remotejdk_11
+# Don't depend on a JAVA_HOME pointing at a system JDK
+# see https://github.com/bazelbuild/rules_jvm_external/issues/445
+common --repo_env=JAVA_HOME=../bazel_tools/jdk
+
+common --enable_platform_specific_config
+common:linux --sandbox_base=/dev/shm
+
+common --nolegacy_external_runfiles
+common --reuse_sandbox_directories
+common --noexperimental_action_cache_store_output_metadata
+common --sandbox_default_allow_network=false
+common --incompatible_strict_action_env
+common:linux --incompatible_sandbox_hermetic_tmp
+test --incompatible_exclusive_test_sandboxed
+
+# Sandboxing stratagy configuration
+common:macos --spawn_strategy=darwin-sandbox
+
+# These actions ask to not be sandboxed since that's a performance penalty with no benefit.
+# Explicitly allow it to avoid the warning.
+common --strategy=CopyFile=local
+common --strategy=CopyDirectory=local
+common --strategy=CopyToDirectory=local
+
+# Don't create runfiles tree for binaries and tests that are built, but not run.
+common --nobuild_runfile_links
+# Mitigate repository rule restarts.
+common --experimental_worker_for_repo_fetching=platform
+
+# Catch busted globs
+common --incompatible_disallow_empty_glob
+
+common --noexperimental_check_output_files
+common --noexperimental_check_external_repository_files
+
+startup --host_jvm_args=-DBAZEL_TRACK_SOURCE_DIRECTORIES=1
+
