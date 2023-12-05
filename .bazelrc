@@ -30,6 +30,8 @@ common --strategy=CopyFile=local
 common --strategy=CopyDirectory=local
 common --strategy=CopyToDirectory=local
 
+common --lockfile_mode=off
+
 # Don't create runfiles tree for binaries and tests that are built, but not run.
 common --nobuild_runfile_links
 # Mitigate repository rule restarts.
@@ -41,5 +43,5 @@ common --incompatible_disallow_empty_glob
 common --noexperimental_check_output_files
 common --noexperimental_check_external_repository_files
 
-startup --host_jvm_args=-DBAZEL_TRACK_SOURCE_DIRECTORIES=1
+#startup --host_jvm_args=-DBAZEL_TRACK_SOURCE_DIRECTORIES=1
 
