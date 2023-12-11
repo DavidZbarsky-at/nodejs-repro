@@ -1,9 +1,64 @@
+load("//:tree.bzl", "tree_test")
 load("@npm//:defs.bzl", "npm_link_all_packages")
+
+[
+    genrule(
+        name = "gen_out_%s" % i,
+        outs = ["out_%s" % i],
+        cmd = "touch $@",
+    ) for i in range(4000)
+]
+
+sh_test(
+    name = "generated_files_test",
+    data = ["out_%s" % i for i in range(4000)],
+    srcs = ["test.sh"],
+)
+
+tree_test(
+    name = "small_tree_artifacts_test",
+    files_per_directory = 1,
+    directories = 4000,
+)
+
+tree_test(
+    name = "med_tree_artifacts_test",
+    files_per_directory = 10,
+    directories = 4000,
+)
+
+tree_test(
+    name = "large_tree_artifacts_test",
+    files_per_directory = 100,
+    directories = 4000,
+)
+
+tree_test(
+    name = "small_tree_runfiles_artifacts_test",
+    files_per_directory = 1,
+    directories = 4000,
+    runfiles_only = True,
+)
+
+tree_test(
+    name = "med_tree_runfiles_artifacts_test",
+    files_per_directory = 10,
+    directories = 4000,
+    runfiles_only = True,
+)
+
+tree_test(
+    name = "large_tree_runfiles_artifacts_test",
+    files_per_directory = 100,
+    directories = 4000,
+    runfiles_only = True,
+)
+
 
 npm_link_all_packages(name = "node_modules")
 
 sh_test(
-    name = "trie_test",
+    name = "node_modules_test",
     data = [
         "//:node_modules/jsdom",
         "//:node_modules/@testing-library/react",
@@ -224,5 +279,7 @@ sh_test(
         "//:node_modules/windows-iana",
         "//:node_modules/write-file-atomic",
     ],
-    srcs = ["trie.test.js"],
+    srcs = ["test.sh"],
 )
+
+
